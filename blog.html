@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Блог · Food Boom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --clay-brown: #A0522D; --stone-grey: #8B8680; --cream: #FAF0E6;
+      --charcoal: #36454F; --kintsugi-gold: #D4AF37;
+      --font-display: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+      --shadow-soft: 2px 4px 12px rgba(54, 69, 79, 0.08);
+      --shadow-hover: 4px 8px 24px rgba(54, 69, 79, 0.12);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-display); background: var(--cream); color: var(--charcoal);
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-blend-mode: multiply;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+    .nav { position: sticky; top: 0; z-index: 100; background: rgba(250,240,230,0.96);
+      backdrop-filter: blur(8px); border-bottom: 1px solid rgba(139,134,128,0.2); }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center;
+      gap: 1rem; flex-wrap: wrap; padding-top: 0.9rem; padding-bottom: 0.9rem; }
+    .logo { font-size: 1.3rem; font-weight: 800; letter-spacing: 0.02em; text-transform: uppercase; }
+    .nav-links { display: flex; gap: 1.4rem; align-items: center; flex-wrap: wrap;
+      font-size: 0.95rem; font-weight: 500; }
+    .nav-links a { position: relative; }
+    .nav-links a:hover { color: var(--clay-brown); }
+    .nav-links a.active { color: var(--clay-brown); }
+    .nav-links a.active::after { content: ''; position: absolute; left: 0; bottom: -4px;
+      width: 100%; height: 2px; background: var(--kintsugi-gold); }
+
+    .blog-head { padding-top: 5rem; padding-bottom: 2rem; text-align: center; }
+    .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--clay-brown); margin-bottom: 0.85rem; }
+    .blog-head h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800;
+      letter-spacing: -0.03em; margin-bottom: 0.75rem; }
+    .blog-head .lead { color: var(--stone-grey); font-size: 1.05rem; max-width: 560px; margin: 0 auto; }
+
+    .blog-list { padding-top: 2rem; padding-bottom: 5rem; display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.75rem; }
+    .card { background: var(--cream); border: 1px solid var(--stone-grey);
+      border-radius: 0 20px 0 20px; overflow: hidden; box-shadow: var(--shadow-soft);
+      display: flex; flex-direction: column; transition: transform 0.3s, box-shadow 0.3s; }
+    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+    .card__cover { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; background: rgba(139,134,128,0.15); }
+    .card__cover--empty { display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(250,240,230,0.85); background: linear-gradient(135deg, #36454F 0%, #5a6b76 100%); }
+    .card__body { padding: 1.4rem 1.5rem 1.6rem; display: flex; flex-direction: column; flex: 1; }
+    .card__date { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--clay-brown); margin-bottom: 0.5rem; }
+    .card__title { font-size: 1.25rem; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; margin-bottom: 0.6rem; }
+    .card__excerpt { color: var(--stone-grey); font-size: 0.95rem; flex: 1; margin-bottom: 1.1rem; }
+    .card__more { font-size: 0.85rem; font-weight: 700; color: var(--clay-brown); }
+    .card__more::after { content: ' →'; }
+
+    .state { grid-column: 1 / -1; text-align: center; color: var(--stone-grey); padding: 3rem 1rem; }
+    .state a { color: var(--clay-brown); text-decoration: underline; }
+
+    .article { padding: 3rem 0 5rem; }
+    .article__inner { max-width: 760px; margin: 0 auto; }
+    .back { display: inline-block; font-size: 0.85rem; font-weight: 600; color: var(--clay-brown);
+      margin-bottom: 1.5rem; }
+    .back:hover { text-decoration: underline; }
+    .article__meta { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.75rem;
+      font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--clay-brown); margin-bottom: 0.9rem; }
+    .article__title { font-size: clamp(2rem, 4.4vw, 3.1rem); font-weight: 800;
+      letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1.5rem; }
+    .article__cover { width: 100%; border-radius: 0 24px 0 24px; margin-bottom: 2rem;
+      border: 1px solid var(--stone-grey); object-fit: cover; max-height: 460px; }
+    .article__content { font-size: 1.06rem; line-height: 1.8; color: #3d4a53; }
+    .article__content p { margin-bottom: 1.2rem; }
+    .article__cta { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(139,134,128,0.3); }
+    .btn { display: inline-block; background: var(--clay-brown); color: #fff;
+      padding: 0.7rem 1.3rem; border-radius: 0 12px 0 12px; font-size: 0.95rem; font-weight: 600; }
+    .btn:hover { background: #8b4513; }
+
+    .footer { border-top: 1px solid rgba(139,134,128,0.3); padding: 2rem 0; margin-top: 2rem; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center;
+      gap: 1rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--stone-grey); }
+    .footer a { color: var(--clay-brown); }
+
+    @media (max-width: 640px) {
+      .nav-inner { padding-top: 0.7rem; padding-bottom: 0.7rem; }
+      .nav-links { width: 100%; justify-content: space-between; gap: 0.5rem; font-size: 0.82rem; }
+      .blog-head { padding-top: 3rem; padding-bottom: 1.5rem; }
+      .article__title { font-size: 1.9rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">Food Boom.</a>
+      <div class="nav-links">
+        <a href="index.html#menu">Меню</a>
+        <a href="index.html#reviews">Отзывы</a>
+        <a href="blog.html" class="active">Блог</a>
+        <a href="index.html#contact">Контакты</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div id="listView">
+      <header class="blog-head container">
+        <p class="eyebrow">Блог</p>
+        <h1>Новости и статьи</h1>
+        <p class="lead">Что происходит на кухне, новые блюда и небольшие истории о еде.</p>
+      </header>
+      <section class="container blog-list" id="postList">
+        <p class="state">Загрузка…</p>
+      </section>
+    </div>
+
+    <article class="article" id="articleView" hidden>
+      <div class="container article__inner" id="articleBody"></div>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>&copy; 2026 Food Boom. Все права защищены.</span>
+      <span><a href="index.html">На главную</a> · <a href="index.html#contact">Связаться с нами</a></span>
+    </div>
+  </footer>
+
+  <script>
+  const listView = document.getElementById('listView');
+  const articleView = document.getElementById('articleView');
+  const articleBody = document.getElementById('articleBody');
+  const postList = document.getElementById('postList');
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function fmtDate(iso) {
+    if (!iso) return '';
+    const d = new Date(String(iso).replace(' ', 'T'));
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' });
+  }
+  function coverMarkup(post, className) {
+    if (post.cover) {
+      return '<img class="' + className + '" src="' + esc(post.cover) + '" alt="' + esc(post.title) + '" loading="lazy">';
+    }
+    return '<div class="' + className + ' card__cover--empty">Food Boom</div>';
+  }
+  function contentMarkup(content) {
+    return String(content || '').split(/\n\s*\n/).map(function (block) {
+      return '<p>' + esc(block).replace(/\n/g, '<br>') + '</p>';
+    }).join('');
+  }
+
+  function renderList(posts) {
+    if (!posts.length) {
+      postList.innerHTML = '<p class="state">Публикаций пока нет. Загляните позже или <a href="index.html#contact">напишите нам</a>.</p>';
+      return;
+    }
+    postList.innerHTML = posts.map(function (post) {
+      return '<a class="card" href="blog.html?id=' + post.id + '">' +
+        coverMarkup(post, 'card__cover') +
+        '<div class="card__body">' +
+          '<div class="card__date">' + esc(fmtDate(post.published_at || post.created_at)) + '</div>' +
+          '<h2 class="card__title">' + esc(post.title) + '</h2>' +
+          '<p class="card__excerpt">' + esc(post.excerpt || '') + '</p>' +
+          '<span class="card__more">Читать</span>' +
+        '</div></a>';
+    }).join('');
+  }
+
+  function renderArticle(post) {
+    document.title = post.title + ' · Food Boom';
+    listView.hidden = true;
+    articleView.hidden = false;
+    articleBody.innerHTML =
+      '<a class="back" href="blog.html">← Все статьи</a>' +
+      '<div class="article__meta"><span>' + esc(fmtDate(post.published_at || post.created_at)) + '</span><span>' + esc(post.author_name || 'Food Boom') + '</span></div>' +
+      '<h1 class="article__title">' + esc(post.title) + '</h1>' +
+      (post.cover ? coverMarkup(post, 'article__cover') : '') +
+      '<div class="article__content">' + contentMarkup(post.content) + '</div>' +
+      '<div class="article__cta"><a class="btn" href="index.html#menu">Смотреть меню</a></div>';
+    window.scrollTo(0, 0);
+  }
+
+  (async function init() {
+    const id = new URLSearchParams(location.search).get('id');
+    try {
+      if (id) {
+        const res = await fetch('/api/news/' + encodeURIComponent(id));
+        if (!res.ok) throw new Error('not found');
+        renderArticle(await res.json());
+      } else {
+        const res = await fetch('/api/news');
+        if (!res.ok) throw new Error('error');
+        renderList(await res.json());
+      }
+    } catch (e) {
+      if (id) {
+        listView.hidden = true; articleView.hidden = false;
+        articleBody.innerHTML = '<a class="back" href="blog.html">← Все статьи</a><h1 class="article__title">Публикация не найдена</h1><p class="article__content">Возможно, она снята с публикации или удалена.</p>';
+      } else {
+        postList.innerHTML = '<p class="state">Не удалось загрузить блог. Попробуйте обновить страницу.</p>';
+      }
+    }
+  })();
+  </script>
+</body>
+</html>

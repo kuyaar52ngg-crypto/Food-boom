@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Панель управления · Food Boom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --clay-brown: #A0522D; --stone-grey: #8B8680; --cream: #FAF0E6;
+      --charcoal: #36454F; --matcha-green: #6B7B3A; --kintsugi-gold: #D4AF37;
+      --indigo: #3F51B5; --red: #c0392b;
+      --font-display: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+      --font-mono: 'Inter', system-ui, sans-serif;
+      --shadow-soft: 2px 4px 12px rgba(54,69,79,0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-display); background: var(--cream); color: var(--charcoal);
+      min-height: 100vh; padding: 2rem 1rem; line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    [hidden] { display: none !important; }
+    .wrap { max-width: 1180px; margin: 0 auto; }
+
+    .gate {
+      max-width: 400px; margin: 5rem auto; background: #fff;
+      border: 1px solid var(--stone-grey); border-radius: 0 24px 0 24px;
+      padding: 2.5rem 2rem; box-shadow: var(--shadow-soft);
+    }
+    .gate h1 { font-size: 2rem; margin-bottom: 0.5rem; text-align: center; letter-spacing: -0.02em; }
+    .gate p { color: var(--stone-grey); text-align: center; margin-bottom: 1.5rem; font-size: 0.85rem; }
+    .gate label { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--stone-grey); margin-bottom: 0.35rem; }
+    .gate input {
+      width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--stone-grey);
+      background: rgba(250,240,230,0.6); font-family: var(--font-display);
+      font-size: 1rem; color: var(--charcoal); border-radius: 8px; margin-bottom: 1rem;
+    }
+    .gate input:focus { outline: none; border-color: var(--clay-brown); box-shadow: 0 0 0 3px rgba(160,82,45,0.16); }
+    .gate button {
+      width: 100%; padding: 0.9rem; background: var(--clay-brown); color: #fff;
+      border: none; font-family: var(--font-display); font-size: 1.05rem; font-weight: 600;
+      cursor: pointer; border-radius: 10px; transition: background 0.2s;
+    }
+    .gate button:hover { background: #8b4513; }
+    .gate button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .gate .err { color: var(--red); font-size: 0.82rem; min-height: 1rem; margin-bottom: 0.5rem; text-align: center; }
+    .gate .hint { font-size: 0.72rem; color: var(--stone-grey); text-align: center; margin-top: 1rem; line-height: 1.7; }
+    .gate .hint b { color: var(--clay-brown); }
+
+    .topbar { display: flex; justify-content: space-between; align-items: center;
+      gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .brand { font-size: 1.35rem; font-weight: 800; letter-spacing: 0.02em; text-transform: uppercase; }
+    .brand span { color: var(--clay-brown); }
+    .who { font-size: 0.85rem; color: var(--stone-grey); display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap; }
+    .who b { color: var(--clay-brown); }
+    .btn {
+      display: inline-block; background: var(--clay-brown); color: #fff;
+      padding: 0.55rem 1.1rem; border: none; font-family: var(--font-display);
+      font-size: 0.92rem; font-weight: 600; cursor: pointer; border-radius: 9px; transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn:hover { background: #8b4513; }
+    .btn-ghost { background: transparent; color: var(--clay-brown); border: 1px solid var(--clay-brown); }
+    .btn-ghost:hover { background: rgba(160,82,45,0.1); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-mini { background: none; border: 1px solid rgba(139,134,128,0.6); color: var(--charcoal);
+      font-family: var(--font-display); font-size: 0.75rem; padding: 0.25rem 0.55rem; border-radius: 6px;
+      cursor: pointer; text-decoration: none; white-space: nowrap; }
+    .btn-mini:hover { border-color: var(--clay-brown); color: var(--clay-brown); }
+
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem; margin-bottom: 1.5rem; }
+    .stats.single { grid-template-columns: minmax(180px, 260px); justify-content: start; }
+    .stat { background: #fff; border: 1px solid rgba(139,134,128,0.3);
+      border-radius: 0 16px 0 16px; padding: 1rem 1.25rem;
+      display: flex; flex-direction: column; gap: 0.15rem; }
+    .stat-label { font-size: 0.68rem; font-weight: 700; color: var(--stone-grey);
+      text-transform: uppercase; letter-spacing: 0.08em; }
+    .stat strong { font-size: 1.7rem; color: var(--charcoal); font-weight: 800; letter-spacing: -0.02em; }
+    .stat-sub { font-size: 0.72rem; color: var(--clay-brown); }
+
+    .tabs { display: flex; gap: 0.5rem; border-bottom: 1px solid rgba(139,134,128,0.3);
+      margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .tab { background: transparent; border: none; padding: 0.7rem 1rem;
+      font-family: var(--font-display); font-size: 1rem; font-weight: 600;
+      color: var(--stone-grey); cursor: pointer; border-bottom: 2px solid transparent;
+      transition: all 0.2s; }
+    .tab.active { color: var(--clay-brown); border-bottom-color: var(--kintsugi-gold); }
+    .tab:hover:not(.active) { color: var(--charcoal); }
+
+    .panel { background: #fff; border: 1px solid rgba(139,134,128,0.3);
+      border-radius: 0 20px 0 20px; padding: 1.25rem; overflow-x: auto; }
+    .panel-head { display: flex; justify-content: space-between; align-items: center;
+      gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .panel-head h2 { font-size: 1.2rem; letter-spacing: -0.01em; }
+    .empty { text-align: center; color: var(--stone-grey); padding: 2rem 1rem; font-size: 0.9rem; }
+    .loading { text-align: center; color: var(--stone-grey); padding: 2rem 1rem; font-size: 0.9rem; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th { text-align: left; font-size: 0.66rem; font-weight: 700;
+      color: var(--stone-grey); text-transform: uppercase; letter-spacing: 0.07em;
+      padding: 0.7rem 0.5rem; border-bottom: 1px solid rgba(139,134,128,0.3); white-space: nowrap; }
+    td { padding: 0.8rem 0.5rem; border-bottom: 1px solid rgba(139,134,128,0.12); vertical-align: middle; }
+    tr:hover td { background: rgba(250,240,230,0.4); }
+    .muted { color: var(--stone-grey); font-size: 0.78rem; }
+    .small { font-size: 0.8rem; }
+    .nowrap { white-space: nowrap; }
+    .row-me td { background: rgba(212,175,55,0.06); }
+    .badge { display: inline-block; padding: 0.1rem 0.4rem; background: var(--kintsugi-gold);
+      color: var(--charcoal); font-size: 0.62rem; font-weight: 700; border-radius: 3px; margin-left: 0.3rem; }
+    .comment { font-style: italic; color: var(--clay-brown); margin-top: 0.3rem; font-size: 0.8rem; }
+
+    select { padding: 0.35rem 0.5rem; border: 1px solid var(--stone-grey); background: #fff;
+      font-family: var(--font-display); font-size: 0.85rem; color: var(--charcoal);
+      border-radius: 6px; cursor: pointer; }
+    select:focus { outline: none; border-color: var(--clay-brown); }
+    select:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .icon-btn { background: none; border: 1px solid var(--stone-grey); color: var(--stone-grey);
+      width: 28px; height: 28px; border-radius: 6px; cursor: pointer;
+      font-size: 0.85rem; transition: all 0.2s; }
+    .icon-btn:hover { border-color: var(--red); color: var(--red); }
+    .icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .create-user { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.8rem; align-items: end; background: rgba(250,240,230,0.55);
+      border: 1px dashed rgba(139,134,128,0.5); border-radius: 0 14px 0 14px;
+      padding: 1rem; margin-bottom: 1.25rem; }
+    .create-user label { display: block; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--stone-grey); margin-bottom: 0.3rem; }
+    .create-user input, .create-user select { width: 100%; padding: 0.55rem 0.65rem;
+      border: 1px solid var(--stone-grey); background: #fff; font-family: var(--font-display);
+      font-size: 0.9rem; color: var(--charcoal); border-radius: 7px; }
+    .create-user input:focus, .create-user select:focus { outline: none; border-color: var(--clay-brown); }
+    .create-user .submit-cell { display: flex; align-items: end; }
+    .create-user .submit-cell .btn { width: 100%; }
+
+    .perms { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+    .perm { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.76rem;
+      color: var(--charcoal); white-space: nowrap; cursor: pointer; }
+    .perm input { accent-color: var(--clay-brown); width: 15px; height: 15px; cursor: pointer; }
+    .perm input:disabled { cursor: not-allowed; opacity: 0.6; }
+    .link-btn { background: none; border: none; padding: 0; color: var(--clay-brown);
+      font-family: var(--font-display); font-size: 0.72rem; text-decoration: underline;
+      cursor: pointer; }
+    .link-btn:hover { color: #8b4513; }
+
+    .status { display: inline-block; padding: 0.12rem 0.5rem; border-radius: 999px;
+      font-size: 0.64rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+    .status.published { background: rgba(107,123,58,0.15); color: #4c5a24; }
+    .status.draft { background: rgba(139,134,128,0.18); color: #6b6660; }
+    .cover-thumb { width: 58px; height: 44px; object-fit: cover; border-radius: 6px;
+      border: 1px solid rgba(139,134,128,0.35); background: rgba(139,134,128,0.12); display: block; }
+
+    .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--charcoal);
+      color: var(--cream); padding: 0.75rem 1.25rem; border-radius: 0 12px 0 12px;
+      font-size: 0.85rem; opacity: 0; transform: translateY(10px);
+      pointer-events: none; transition: all 0.3s; z-index: 9999; max-width: 340px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.ok { border-left: 3px solid var(--matcha-green); }
+    .toast.err { border-left: 3px solid var(--red); }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(54,69,79,0.55);
+      backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center;
+      padding: 1rem; z-index: 1000; }
+    .modal { background: var(--cream); border: 1px solid var(--stone-grey);
+      border-radius: 0 20px 0 20px; width: min(720px, 100%); max-height: 92vh;
+      overflow-y: auto; padding: 1.5rem; box-shadow: 0 12px 30px rgba(0,0,0,0.25); }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+    .modal-head h2 { font-size: 1.35rem; letter-spacing: -0.01em; }
+    .close-x { background: none; border: none; font-size: 1.7rem; line-height: 1;
+      color: var(--stone-grey); cursor: pointer; }
+    .close-x:hover { color: var(--clay-brown); }
+    .form-row { margin-bottom: 0.9rem; }
+    .form-row label { display: block; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.07em;
+      text-transform: uppercase; color: var(--stone-grey); margin-bottom: 0.35rem; }
+    .form-row input, .form-row textarea, .form-row select { width: 100%; padding: 0.65rem 0.75rem;
+      border: 1px solid var(--stone-grey); background: #fff; font-family: var(--font-display);
+      font-size: 0.95rem; color: var(--charcoal); border-radius: 7px; }
+    .form-row input:focus, .form-row textarea:focus, .form-row select:focus {
+      outline: none; border-color: var(--clay-brown); box-shadow: 0 0 0 3px rgba(160,82,45,0.14); }
+    .form-row textarea { resize: vertical; min-height: 80px; }
+    .form-row textarea.content { min-height: 220px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 0.6rem; margin-top: 1rem; }
+
+    @media (max-width: 640px) {
+      .panel { padding: 0.75rem; }
+      table { font-size: 0.82rem; }
+      .create-user { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="gate" id="gate" hidden>
+      <h1>Вход в панель</h1>
+      <p>Food Boom · Administrative area</p>
+      <form id="gateForm">
+        <label for="gateLogin">Email</label>
+        <input type="email" id="gateLogin" required autocomplete="username" placeholder="admin@foodboom.ru">
+        <label for="gatePassword">Пароль</label>
+        <input type="password" id="gatePassword" required autocomplete="current-password">
+        <div class="err" id="gateError"></div>
+        <button type="submit" id="gateSubmit">Войти</button>
+      </form>
+    </div>
+
+    <div id="panel" hidden>
+      <div class="topbar">
+        <div class="brand">Food Boom<span>.</span> Admin</div>
+        <div class="who">
+          Вы: <b id="whoami">—</b>
+          <a href="index.html" class="btn btn-ghost" style="margin-left:0.5rem;">← На сайт</a>
+          <button class="btn btn-ghost" id="logoutBtn" style="margin-left:0.4rem;">Выйти</button>
+        </div>
+      </div>
+      <div class="stats" id="stats"></div>
+      <div class="tabs">
+        <button class="tab active" data-tab="orders" id="tabOrders" hidden>Заказы</button>
+        <button class="tab" data-tab="feedback" id="tabFeedback" hidden>Заявки</button>
+        <button class="tab" data-tab="news" id="tabNews" hidden>Блог</button>
+        <button class="tab" data-tab="users" id="tabUsers" hidden>Пользователи</button>
+      </div>
+      <div class="panel" id="panel-orders" hidden></div>
+      <div class="panel" id="panel-feedback" hidden></div>
+      <div class="panel" id="panel-news" hidden></div>
+      <div class="panel" id="panel-users" hidden></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Редактор публикации -->
+  <div class="modal-overlay" id="newsModal" hidden>
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="newsModalTitle">Новая публикация</h2>
+        <button class="close-x" id="closeNewsModal" type="button" aria-label="Закрыть">&times;</button>
+      </div>
+      <form id="newsForm">
+        <input type="hidden" id="newsId">
+        <div class="form-row">
+          <label for="newsTitle">Заголовок</label>
+          <input type="text" id="newsTitle" required maxlength="160" placeholder="Например: Новое меню на осень">
+        </div>
+        <div class="form-row">
+          <label for="newsExcerpt">Краткое описание</label>
+          <textarea id="newsExcerpt" rows="2" maxlength="300" placeholder="О чём публикация — покажется в списке"></textarea>
+        </div>
+        <div class="form-row">
+          <label for="newsContent">Текст публикации</label>
+          <textarea id="newsContent" class="content" required placeholder="Пишите обычным текстом. Пустая строка разделит абзацы."></textarea>
+        </div>
+        <div class="form-row">
+          <label for="newsCover">Обложка (URL или путь)</label>
+          <input type="text" id="newsCover" placeholder="images/image_1.webp">
+        </div>
+        <div class="form-row">
+          <label for="newsStatus">Статус</label>
+          <select id="newsStatus">
+            <option value="draft">Черновик</option>
+            <option value="published">Опубликовано</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="cancelNews">Отмена</button>
+          <button type="submit" class="btn" id="saveNewsBtn">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+  const TOKEN_KEY = 'fb_token';
+  const API = {
+    async call(path, opts) {
+      opts = opts || {};
+      const token = localStorage.getItem(TOKEN_KEY);
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+      const res = await fetch('/api/' + path, {
+        headers: headers, method: opts.method || 'GET', body: opts.body
+      });
+      let data = {};
+      try { data = await res.json(); } catch (e) {}
+      if (!res.ok) {
+        if (res.status === 401) {
+          localStorage.removeItem(TOKEN_KEY);
+          if (token && path !== 'auth/login') {
+            window.dispatchEvent(new CustomEvent('fb-auth', { detail: 401 }));
+          }
+        } else if (res.status === 403) {
+          window.dispatchEvent(new CustomEvent('fb-auth', { detail: 403 }));
+        }
+        throw new Error(data.error || ('Ошибка ' + res.status));
+      }
+      return data;
+    },
+    me: () => API.call('auth/me'),
+    login: async (email, password) => {
+      const data = await API.call('auth/login', { method: 'POST', body: JSON.stringify({ email: email, password: password }) });
+      if (data.token) localStorage.setItem(TOKEN_KEY, data.token);
+      return data;
+    },
+    logout: async () => { localStorage.removeItem(TOKEN_KEY); return Promise.resolve(); },
+    orders:         ()   => API.call('orders'),
+    orderStatus:    (id, status) => API.call('orders', { method: 'PATCH', body: JSON.stringify({ id: id, status: status }) }),
+    orderDelete:    (id) => API.call('orders?id=' + encodeURIComponent(id), { method: 'DELETE' }),
+    feedback:       ()   => API.call('feedback'),
+    feedbackStatus: (id, status) => API.call('feedback', { method: 'PATCH', body: JSON.stringify({ id: id, status: status }) }),
+    feedbackDelete: (id) => API.call('feedback?id=' + encodeURIComponent(id), { method: 'DELETE' }),
+    users:          ()   => API.call('users'),
+    createUser:     (data) => API.call('users', { method: 'POST', body: JSON.stringify(data) }),
+    updateUser:     (data) => API.call('users', { method: 'PATCH', body: JSON.stringify(data) }),
+    deleteUser:     (id) => API.call('users?id=' + encodeURIComponent(id), { method: 'DELETE' }),
+    news:           ()   => API.call('news/all'),
+    newsCreate:     (data) => API.call('news', { method: 'POST', body: JSON.stringify(data) }),
+    newsUpdate:     (data) => API.call('news', { method: 'PATCH', body: JSON.stringify(data) }),
+    newsDelete:     (id) => API.call('news?id=' + encodeURIComponent(id), { method: 'DELETE' })
+  };
+
+  const ROLES = ['admin', 'operator', 'editor', 'user', 'guest'];
+  const ROLE_LABELS = { admin: 'Администратор', operator: 'Оператор', editor: 'Редактор', user: 'Пользователь', guest: 'Гость' };
+  const PERMISSION_LABELS = { orders: 'Заказы', feedback: 'Заявки', news: 'Блог' };
+  const PERMISSION_KEYS = Object.keys(PERMISSION_LABELS);
+  const ORDER_STATUS    = { new: 'Новый', accepted: 'Принят', delivering: 'В доставке', done: 'Выполнен', cancelled: 'Отменён' };
+  const FEEDBACK_STATUS = { new: 'Новое', inwork: 'В работе', done: 'Обработано' };
+  const PAYMENT_LABELS  = { card: 'Картой курьеру', cash: 'Наличными', online: 'Онлайн-оплата' };
+
+  let currentUser = null;
+  let activeTab = 'orders';
+  let toastTimer = null;
+  let editingNewsId = null;
+  let dataCache = { orders: [], feedback: [], news: [], users: [] };
+
+  const $ = (id) => document.getElementById(id);
+  const gate = $('gate'), panel = $('panel'), gateForm = $('gateForm'), gateError = $('gateError'),
+        gateSubmit = $('gateSubmit'), toast = $('toast'), newsModal = $('newsModal');
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    var s = String(iso).replace(' ', 'T'); var d = new Date(s);
+    if (isNaN(d.getTime())) return '—';
+    return d.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+  function money(n) { return new Intl.NumberFormat('ru-RU').format(Number(n) || 0) + ' ₽'; }
+  function hasPerm(p) { return !!(currentUser && (currentUser.permissions || []).includes(p)); }
+  function isAdmin() { return !!(currentUser && currentUser.role === 'admin'); }
+
+  function showToast(msg, kind) {
+    toast.textContent = msg; toast.className = 'toast show ' + (kind || '');
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { toast.className = 'toast'; }, 3000);
+  }
+
+  function switchTab(name) {
+    activeTab = name;
+    document.querySelectorAll('.tab').forEach(function (b) { b.classList.toggle('active', b.dataset.tab === name); });
+    ['orders', 'feedback', 'news', 'users'].forEach(function (k) { $('panel-' + k).hidden = k !== name; });
+  }
+  document.querySelectorAll('.tab').forEach(function (btn) {
+    btn.addEventListener('click', function () { switchTab(btn.dataset.tab); });
+  });
+
+  function statCard(label, value, sub) {
+    return '<div class="stat"><span class="stat-label">' + esc(label) + '</span><strong>' + value + '</strong><span class="stat-sub">' + esc(sub) + '</span></div>';
+  }
+  function renderStats() {
+    var orders = dataCache.orders || [], feedback = dataCache.feedback || [],
+        news = dataCache.news || [], users = dataCache.users || [], cards = [];
+    if (hasPerm('orders')) {
+      var revenue = orders.filter(function (o) { return o.status !== 'cancelled'; })
+        .reduce(function (s, o) { return s + (Number(o.total) || 0); }, 0);
+      var newOrders = orders.filter(function (o) { return o.status === 'new'; }).length;
+      cards.push(statCard('Заказы', orders.length, newOrders + ' новых'));
+      cards.push(statCard('Выручка', money(revenue), 'без отменённых'));
+    }
+    if (hasPerm('feedback')) {
+      var fresh = feedback.filter(function (f) { return f.status === 'new'; }).length;
+      cards.push(statCard('Заявки', feedback.length, fresh + ' новых'));
+    }
+    if (hasPerm('news')) {
+      var published = news.filter(function (n) { return n.status === 'published'; }).length;
+      cards.push(statCard('Публикации', news.length, published + ' опубликовано'));
+    }
+    if (isAdmin()) {
+      var guests = users.filter(function (u) { return u.role === 'guest'; }).length;
+      cards.push(statCard('Пользователи', users.length, guests + ' гостей'));
+    }
+    $('stats').innerHTML = cards.join('');
+    $('stats').classList.toggle('single', cards.length === 1);
+  }
+
+  /* ---------- Заказы ---------- */
+  function renderOrders() {
+    var box = $('panel-orders'), list = dataCache.orders || [];
+    if (!list.length) { box.innerHTML = '<p class="empty">Заказов пока нет.</p>'; return; }
+    box.innerHTML = '<table><thead><tr><th>№</th><th>Дата</th><th>Клиент</th><th>Доставка / Оплата</th><th>Состав</th><th>Сумма</th><th>Статус</th><th></th></tr></thead><tbody>' +
+      list.map(function (o) {
+        var c = o.customer || {};
+        var delivery = o.delivery === 'pickup' ? '<div>Самовывоз</div><div class="muted">—</div>' : '<div>Доставка</div><div class="muted">' + esc(o.address || '—') + '</div>';
+        var opts = Object.keys(ORDER_STATUS).map(function (k) { return '<option value="' + k + '"' + (o.status === k ? ' selected' : '') + '>' + ORDER_STATUS[k] + '</option>'; }).join('');
+        var items = (o.items || []).map(function (i) { return esc(i.name) + ' × ' + i.qty; }).join(', ');
+        return '<tr><td><b>' + esc(o.number) + '</b></td><td class="muted nowrap">' + fmtDate(o.created_at) + '</td><td><div>' + esc(c.name || '—') + '</div><div class="muted">' + esc(c.phone || '') + '</div><div class="muted">' + esc(c.email || '') + '</div></td><td>' + delivery + '<div class="muted">' + esc(PAYMENT_LABELS[o.payment] || '—') + '</div></td><td class="muted small">' + items + (o.comment ? '<div class="comment">«' + esc(o.comment) + '»</div>' : '') + '</td><td class="nowrap"><b>' + money(o.total) + '</b></td><td><select data-order-status="' + o.id + '">' + opts + '</select></td><td><button class="icon-btn" data-order-del="' + o.id + '" title="Удалить">✕</button></td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+  $('panel-orders').addEventListener('change', async function (e) {
+    var sel = e.target.closest('[data-order-status]'); if (!sel) return;
+    var id = Number(sel.dataset.orderStatus);
+    try { await API.orderStatus(id, sel.value); var o = dataCache.orders.find(function (x) { return x.id === id; }); if (o) o.status = sel.value; renderStats(); showToast('Статус обновлён', 'ok'); }
+    catch (err) { showToast(err.message, 'err'); loadOrders(); }
+  });
+  $('panel-orders').addEventListener('click', async function (e) {
+    var btn = e.target.closest('[data-order-del]'); if (!btn) return;
+    if (!confirm('Удалить заказ?')) return;
+    try { await API.orderDelete(btn.dataset.orderDel); dataCache.orders = dataCache.orders.filter(function (o) { return o.id !== Number(btn.dataset.orderDel); }); renderOrders(); renderStats(); showToast('Заказ удалён'); }
+    catch (err) { showToast(err.message, 'err'); }
+  });
+  async function loadOrders() {
+    $('panel-orders').innerHTML = '<div class="loading">Загрузка…</div>';
+    try { dataCache.orders = await API.orders(); renderOrders(); renderStats(); }
+    catch (err) { $('panel-orders').innerHTML = '<p class="empty">Ошибка: ' + esc(err.message) + '</p>'; }
+  }
+
+  /* ---------- Заявки ---------- */
+  function renderFeedback() {
+    var box = $('panel-feedback'), list = dataCache.feedback || [];
+    if (!list.length) { box.innerHTML = '<p class="empty">Заявок нет.</p>'; return; }
+    box.innerHTML = '<table><thead><tr><th>Дата</th><th>Имя</th><th>Email</th><th>Сообщение</th><th>Статус</th><th></th></tr></thead><tbody>' +
+      list.map(function (f) {
+        var opts = Object.keys(FEEDBACK_STATUS).map(function (k) { return '<option value="' + k + '"' + (f.status === k ? ' selected' : '') + '>' + FEEDBACK_STATUS[k] + '</option>'; }).join('');
+        return '<tr><td class="muted nowrap">' + fmtDate(f.created_at) + '</td><td>' + esc(f.name) + '</td><td class="muted">' + esc(f.email) + '</td><td class="small">' + esc(f.message) + '</td><td><select data-feedback-status="' + f.id + '">' + opts + '</select></td><td><button class="icon-btn" data-feedback-del="' + f.id + '" title="Удалить">✕</button></td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+  $('panel-feedback').addEventListener('change', async function (e) {
+    var sel = e.target.closest('[data-feedback-status]'); if (!sel) return;
+    var id = Number(sel.dataset.feedbackStatus);
+    try { await API.feedbackStatus(id, sel.value); var f = dataCache.feedback.find(function (x) { return x.id === id; }); if (f) f.status = sel.value; renderStats(); showToast('Статус обновлён', 'ok'); }
+    catch (err) { showToast(err.message, 'err'); loadFeedback(); }
+  });
+  $('panel-feedback').addEventListener('click', async function (e) {
+    var btn = e.target.closest('[data-feedback-del]'); if (!btn) return;
+    if (!confirm('Удалить заявку?')) return;
+    try { await API.feedbackDelete(btn.dataset.feedbackDel); dataCache.feedback = dataCache.feedback.filter(function (f) { return f.id !== Number(btn.dataset.feedbackDel); }); renderFeedback(); renderStats(); showToast('Заявка удалена'); }
+    catch (err) { showToast(err.message, 'err'); }
+  });
+  async function loadFeedback() {
+    $('panel-feedback').innerHTML = '<div class="loading">Загрузка…</div>';
+    try { dataCache.feedback = await API.feedback(); renderFeedback(); renderStats(); }
+    catch (err) { $('panel-feedback').innerHTML = '<p class="empty">Ошибка: ' + esc(err.message) + '</p>'; }
+  }
+
+  /* ---------- Пользователи ---------- */
+  function permBoxes(u) {
+    var isMe = currentUser && u.id === currentUser.id;
+    var locked = u.role === 'admin' || isMe;
+    return PERMISSION_KEYS.map(function (k) {
+      return '<label class="perm"><input type="checkbox" data-user-perm data-id="' + u.id + '" data-perm="' + k + '"' +
+        ((u.permissions || []).includes(k) ? ' checked' : '') + (locked ? ' disabled' : '') + '> ' + PERMISSION_LABELS[k] + '</label>';
+    }).join('');
+  }
+  function renderUsers() {
+    var box = $('panel-users'), list = dataCache.users || [];
+    var form = '<div class="panel-head"><h2>Пользователи</h2><span class="muted">Роли и индивидуальные права</span></div>' +
+      '<form id="createUserForm" class="create-user">' +
+        '<div><label for="nuName">Имя</label><input id="nuName" required placeholder="Иван Иванов"></div>' +
+        '<div><label for="nuEmail">Email</label><input type="email" id="nuEmail" required placeholder="user@example.com"></div>' +
+        '<div><label for="nuPhone">Телефон</label><input id="nuPhone" placeholder="+7 999 123-45-67"></div>' +
+        '<div><label for="nuPassword">Пароль</label><input type="password" id="nuPassword" required minlength="4" placeholder="мин. 4 символа"></div>' +
+        '<div><label for="nuRole">Роль</label><select id="nuRole">' +
+          ['operator', 'editor', 'admin', 'user', 'guest'].map(function (r) { return '<option value="' + r + '"' + (r === 'operator' ? ' selected' : '') + '>' + ROLE_LABELS[r] + '</option>'; }).join('') +
+        '</select></div>' +
+        '<div class="submit-cell"><button type="submit" class="btn" id="createUserBtn">Добавить</button></div>' +
+      '</form>';
+    if (!list.length) { box.innerHTML = form + '<p class="empty">Пользователей нет.</p>'; return; }
+    var meId = currentUser ? currentUser.id : 0;
+    box.innerHTML = form + '<table><thead><tr><th>ID</th><th>Имя</th><th>Email</th><th>Роль</th><th>Права доступа</th><th>Заказов</th><th>Создан</th><th></th></tr></thead><tbody>' +
+      list.map(function (u) {
+        var opts = ROLES.map(function (r) { return '<option value="' + r + '"' + (u.role === r ? ' selected' : '') + '>' + ROLE_LABELS[r] + '</option>'; }).join('');
+        var isMe = meId === u.id;
+        var custom = u.custom_permissions ? ' <span class="badge">свои права</span>' : '';
+        var reset = u.custom_permissions ? ' <button type="button" class="link-btn" data-user-reset="' + u.id + '">сбросить</button>' : '';
+        return '<tr' + (isMe ? ' class="row-me"' : '') + '><td class="muted">' + u.id + '</td><td>' + esc(u.name) + (isMe ? ' <span class="badge">это вы</span>' : '') + '</td><td><div>' + esc(u.email || '—') + '</div><div class="muted">' + esc(u.phone || '—') + '</div></td>' +
+          '<td><select data-user-role="' + u.id + '"' + (isMe ? ' disabled' : '') + '>' + opts + '</select></td>' +
+          '<td><div class="perms">' + permBoxes(u) + '</div>' + custom + reset + '</td>' +
+          '<td class="muted">' + (u.orders_count || 0) + '</td><td class="muted nowrap">' + fmtDate(u.created_at) + '</td>' +
+          '<td><button class="icon-btn" data-user-del="' + u.id + '" title="Удалить"' + (isMe ? ' disabled' : '') + '>✕</button></td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+
+  $('panel-users').addEventListener('change', async function (e) {
+    var roleSel = e.target.closest('[data-user-role]');
+    if (roleSel) {
+      var id = Number(roleSel.dataset.userRole);
+      roleSel.disabled = true;
+      try {
+        await API.updateUser({ id: id, role: roleSel.value });
+        await loadUsers();
+        showToast('Роль обновлена', 'ok');
+      } catch (err) { showToast(err.message, 'err'); await loadUsers(); }
+      return;
+    }
+    var permBox = e.target.closest('[data-user-perm]');
+    if (permBox) {
+      var uid = Number(permBox.dataset.id);
+      var row = permBox.closest('tr');
+      var perms = Array.prototype.slice.call(row.querySelectorAll('[data-user-perm]'))
+        .filter(function (c) { return c.checked; }).map(function (c) { return c.dataset.perm; });
+      try {
+        var res = await API.updateUser({ id: uid, permissions: perms });
+        var u = dataCache.users.find(function (x) { return x.id === uid; });
+        if (u) { u.permissions = res.user.permissions; u.custom_permissions = res.user.custom_permissions; }
+        renderUsers(); renderStats(); showToast('Права обновлены', 'ok');
+      } catch (err) { showToast(err.message, 'err'); await loadUsers(); }
+    }
+  });
+
+  $('panel-users').addEventListener('click', async function (e) {
+    var resetBtn = e.target.closest('[data-user-reset]');
+    if (resetBtn) {
+      try { await API.updateUser({ id: Number(resetBtn.dataset.userReset), permissions: null }); await loadUsers(); showToast('Права сброшены по роли', 'ok'); }
+      catch (err) { showToast(err.message, 'err'); }
+      return;
+    }
+    var delBtn = e.target.closest('[data-user-del]');
+    if (!delBtn) return;
+    if (!confirm('Удалить пользователя?')) return;
+    try { await API.deleteUser(delBtn.dataset.userDel); dataCache.users = dataCache.users.filter(function (u) { return u.id !== Number(delBtn.dataset.userDel); }); renderUsers(); renderStats(); showToast('Пользователь удалён'); }
+    catch (err) { showToast(err.message, 'err'); }
+  });
+
+  $('panel-users').addEventListener('submit', async function (e) {
+    if (e.target.id !== 'createUserForm') return;
+    e.preventDefault();
+    if (!isAdmin()) {
+      showToast('Добавлять пользователей может только администратор', 'err');
+      await refreshSession();
+      return;
+    }
+    var btn = $('createUserBtn');
+    var data = {
+      name: $('nuName').value.trim(),
+      email: $('nuEmail').value.trim(),
+      phone: $('nuPhone').value.trim(),
+      password: $('nuPassword').value,
+      role: $('nuRole').value
+    };
+    if (!data.name || !data.email || !data.password) { showToast('Заполните имя, email и пароль', 'err'); return; }
+    btn.disabled = true; btn.textContent = 'Добавление…';
+    try {
+      await API.createUser(data);
+      await loadUsers(); renderStats();
+      showToast('Пользователь добавлен', 'ok');
+    } catch (err) { showToast(err.message, 'err'); }
+    finally { btn.disabled = false; btn.textContent = 'Добавить'; }
+  });
+
+  async function loadUsers() {
+    $('panel-users').innerHTML = '<div class="loading">Загрузка…</div>';
+    try { dataCache.users = await API.users(); renderUsers(); renderStats(); }
+    catch (err) { $('panel-users').innerHTML = '<p class="empty">Ошибка: ' + esc(err.message) + '</p>'; }
+  }
+
+  /* ---------- Блог ---------- */
+  function renderNews() {
+    var box = $('panel-news'), list = dataCache.news || [];
+    box.innerHTML = '<div class="panel-head"><h2>Блог</h2><button type="button" class="btn" id="newNewsBtn">+ Новая публикация</button></div>';
+    if (!list.length) { box.innerHTML += '<p class="empty">Публикаций пока нет. Создайте первую — она появится на сайте в разделе «Блог».</p>'; return; }
+    box.innerHTML += '<table><thead><tr><th>Обложка</th><th>Публикация</th><th>Статус</th><th>Автор</th><th>Дата</th><th></th></tr></thead><tbody>' +
+      list.map(function (n) {
+        var published = n.status === 'published';
+        var cover = n.cover ? '<img class="cover-thumb" src="' + esc(n.cover) + '" alt="">' : '<div class="cover-thumb"></div>';
+        var actions = '<button type="button" class="btn-mini" data-news-edit="' + n.id + '">Ред.</button> ' +
+          '<button type="button" class="btn-mini" data-news-toggle="' + n.id + '" data-next="' + (published ? 'draft' : 'published') + '">' + (published ? 'В черновик' : 'Опубликовать') + '</button> ' +
+          (published ? '<a class="btn-mini" href="blog.html?id=' + n.id + '" target="_blank" rel="noopener">Открыть</a> ' : '') +
+          '<button type="button" class="icon-btn" data-news-del="' + n.id + '" title="Удалить">✕</button>';
+        return '<tr><td>' + cover + '</td><td><b>' + esc(n.title) + '</b>' + (n.excerpt ? '<div class="muted small">' + esc(n.excerpt) + '</div>' : '') + '</td>' +
+          '<td><span class="status ' + (published ? 'published' : 'draft') + '">' + (published ? 'Опубликовано' : 'Черновик') + '</span></td>' +
+          '<td class="muted">' + esc(n.author_name || '—') + '</td><td class="muted nowrap">' + fmtDate(published ? n.published_at : n.updated_at) + '</td>' +
+          '<td class="nowrap">' + actions + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+
+  function openNewsModal(post) {
+    editingNewsId = post ? post.id : null;
+    $('newsModalTitle').textContent = post ? 'Редактировать публикацию' : 'Новая публикация';
+    $('newsId').value = post ? post.id : '';
+    $('newsTitle').value = post ? post.title : '';
+    $('newsExcerpt').value = post ? (post.excerpt || '') : '';
+    $('newsContent').value = post ? post.content : '';
+    $('newsCover').value = post ? (post.cover || '') : '';
+    $('newsStatus').value = post ? post.status : 'draft';
+    newsModal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    setTimeout(function () { $('newsTitle').focus(); }, 30);
+  }
+  function closeNewsModal() {
+    newsModal.hidden = true;
+    document.body.style.overflow = '';
+    editingNewsId = null;
+  }
+  $('closeNewsModal').addEventListener('click', closeNewsModal);
+  $('cancelNews').addEventListener('click', closeNewsModal);
+  newsModal.addEventListener('click', function (e) { if (e.target === newsModal) closeNewsModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !newsModal.hidden) closeNewsModal(); });
+
+  $('panel-news').addEventListener('click', async function (e) {
+    if (e.target.closest('#newNewsBtn')) { openNewsModal(null); return; }
+    var editBtn = e.target.closest('[data-news-edit]');
+    if (editBtn) {
+      var post = dataCache.news.find(function (n) { return n.id === Number(editBtn.dataset.newsEdit); });
+      if (post) openNewsModal(post);
+      return;
+    }
+    var toggleBtn = e.target.closest('[data-news-toggle]');
+    if (toggleBtn) {
+      try {
+        await API.newsUpdate({ id: Number(toggleBtn.dataset.newsToggle), status: toggleBtn.dataset.next });
+        await loadNews(); renderStats(); showToast(toggleBtn.dataset.next === 'published' ? 'Публикация опубликована' : 'Публикация снята с публикации', 'ok');
+      } catch (err) { showToast(err.message, 'err'); }
+      return;
+    }
+    var delBtn = e.target.closest('[data-news-del]');
+    if (delBtn) {
+      if (!confirm('Удалить публикацию?')) return;
+      try { await API.newsDelete(delBtn.dataset.newsDel); dataCache.news = dataCache.news.filter(function (n) { return n.id !== Number(delBtn.dataset.newsDel); }); renderNews(); renderStats(); showToast('Публикация удалена'); }
+      catch (err) { showToast(err.message, 'err'); }
+    }
+  });
+
+  $('newsForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var btn = $('saveNewsBtn');
+    var data = {
+      title: $('newsTitle').value.trim(),
+      excerpt: $('newsExcerpt').value.trim(),
+      content: $('newsContent').value,
+      cover: $('newsCover').value.trim(),
+      status: $('newsStatus').value
+    };
+    if (!data.title || !data.content.trim()) { showToast('Заполните заголовок и текст', 'err'); return; }
+    btn.disabled = true; btn.textContent = 'Сохранение…';
+    try {
+      if (editingNewsId) { data.id = editingNewsId; await API.newsUpdate(data); }
+      else { await API.newsCreate(data); }
+      closeNewsModal();
+      await loadNews(); renderStats();
+      showToast('Публикация сохранена', 'ok');
+    } catch (err) { showToast(err.message, 'err'); }
+    finally { btn.disabled = false; btn.textContent = 'Сохранить'; }
+  });
+
+  async function loadNews() {
+    $('panel-news').innerHTML = '<div class="loading">Загрузка…</div>';
+    try { dataCache.news = await API.news(); renderNews(); renderStats(); }
+    catch (err) { $('panel-news').innerHTML = '<p class="empty">Ошибка: ' + esc(err.message) + '</p>'; }
+  }
+
+  /* ---------- Вход и рендер ---------- */
+  function applyTabVisibility() {
+    var admin = isAdmin();
+    $('tabOrders').hidden = !(admin || hasPerm('orders'));
+    $('tabFeedback').hidden = !(admin || hasPerm('feedback'));
+    $('tabNews').hidden = !(admin || hasPerm('news'));
+    $('tabUsers').hidden = !admin;
+    var visible = Array.prototype.slice.call(document.querySelectorAll('.tab'))
+      .filter(function (b) { return !b.hidden; }).map(function (b) { return b.dataset.tab; });
+    if (!visible.includes(activeTab)) activeTab = visible[0] || 'orders';
+    switchTab(activeTab);
+  }
+
+  async function render() {
+    if (!currentUser) {
+      try { var me = await API.me(); currentUser = me.user || null; } catch (e) { currentUser = null; }
+    }
+    var allowed = currentUser && (isAdmin() || (currentUser.permissions || []).length > 0);
+    if (!allowed) {
+      gate.hidden = false; panel.hidden = true;
+      if (currentUser) {
+        gateError.textContent = 'Вы вошли как «' + (ROLE_LABELS[currentUser.role] || currentUser.role) + '». Доступ к панели закрыт.';
+      }
+      return;
+    }
+    gate.hidden = true; panel.hidden = false; gateError.textContent = '';
+    $('whoami').textContent = currentUser.name + ' · ' + (ROLE_LABELS[currentUser.role] || currentUser.role);
+    applyTabVisibility();
+
+    var jobs = [];
+    if (isAdmin() || hasPerm('orders')) jobs.push(loadOrders());
+    if (isAdmin() || hasPerm('feedback')) jobs.push(loadFeedback());
+    if (isAdmin() || hasPerm('news')) jobs.push(loadNews());
+    if (isAdmin()) jobs.push(loadUsers());
+    await Promise.all(jobs);
+    renderStats();
+  }
+
+  gateForm.addEventListener('submit', async function (e) {
+    e.preventDefault(); gateError.textContent = ''; gateSubmit.disabled = true; gateSubmit.textContent = 'Вход…';
+    try {
+      await API.login($('gateLogin').value.trim(), $('gatePassword').value);
+      var me = await API.me();
+      var u = me.user;
+      if (!u || (u.role !== 'admin' && u.role !== 'operator' && u.role !== 'editor' && !(u.permissions || []).length)) {
+        await API.logout(); gateError.textContent = 'Нет доступа.'; return;
+      }
+      currentUser = u; gateForm.reset(); await render();
+    } catch (err) { gateError.textContent = err.message || 'Ошибка входа'; }
+    finally { gateSubmit.disabled = false; gateSubmit.textContent = 'Войти'; }
+  });
+
+  $('logoutBtn').addEventListener('click', async function () {
+    try { await API.logout(); } catch (e) {}
+    showGate('');
+  });
+
+  function showGate(message) {
+    currentUser = null;
+    dataCache = { orders: [], feedback: [], news: [], users: [] };
+    activeTab = 'orders';
+    gate.hidden = false;
+    panel.hidden = true;
+    gateError.textContent = message || '';
+    newsModal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  let refreshingSession = false;
+  async function refreshSession() {
+    if (refreshingSession) return;
+    refreshingSession = true;
+    try {
+      const me = await API.me();
+      currentUser = me.user || null;
+      await render();
+      if (currentUser) {
+        showToast('Активная роль: ' + (ROLE_LABELS[currentUser.role] || currentUser.role) + '. Права доступа обновлены.', 'err');
+      }
+    } catch (e) {
+      showGate('Сессия изменилась. Войдите снова.');
+    } finally {
+      refreshingSession = false;
+    }
+  }
+
+  // Другая вкладка сменила аккаунт — перезагружаемся с актуальным токеном
+  window.addEventListener('storage', function (e) {
+    if (e.key === TOKEN_KEY) location.reload();
+  });
+
+  // Возврат по кнопке «Назад» из кэша страницы после смены аккаунта
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) location.reload();
+  });
+
+  window.addEventListener('fb-auth', function (e) {
+    if (e.detail === 401) showGate('Сессия истекла. Войдите снова.');
+    else refreshSession();
+  });
+
+  (async function boot() {
+    try { var me = await API.me(); currentUser = me.user || null; } catch (e) { currentUser = null; }
+    await render();
+  })();
+  </script>
+</body>
+</html>
