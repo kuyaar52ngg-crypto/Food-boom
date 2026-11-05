@@ -98,3 +98,7 @@ js/api-fallback.js — резервный клиентский API для ста
 | `GET/POST/PATCH/DELETE` | `/api/news/all`, `/api/news` | право `news` |
 | `GET/POST/PATCH/DELETE` | `/api/users` | только `admin` |
 | `GET` | `/api/health` | все |
+
+
+
+https://2658455e-97ae-4a35-9b30-78e8a6e28605-00-l4xuq2tr89s0.kira.replit.dev/index.html
