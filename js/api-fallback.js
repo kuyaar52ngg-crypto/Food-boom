@@ -577,7 +577,11 @@
     }
   }
 
+  // Подменяем ответ только когда маршрута /api нет вовсе (статический хостинг).
+  // Ошибки работающего сервера (500/502 и т.п.) не перехватываем, чтобы они
+  // были видны, а не маскировались демо-данными.
   function looksLikeMissingApi(response) {
+    if (response.status !== 404) return false;
     var type = '';
     try { type = (response.headers.get('content-type') || '').toLowerCase(); } catch (e) { type = ''; }
     return type.indexOf('application/json') === -1;

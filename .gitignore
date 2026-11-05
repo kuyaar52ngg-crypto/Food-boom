@@ -4,6 +4,7 @@ node_modules/
 # Секреты и локальная конфигурация
 .env
 .env.*
+!.env.example
 .osp/
 ююю.md
 
