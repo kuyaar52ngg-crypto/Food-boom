@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Boom</title>
+  
+  <!-- ДОБАВЛЕНЫ SEO МЕТА-ТЕГИ -->
+  <meta name="description" content="Закажите вкусные роллы, суши, шаурму и удон с доставкой на дом. Свежие ингредиенты, быстрое приготовление и приятные цены в Food Boom.">
+  <meta name="keywords" content="доставка суши, заказать роллы, доставка шаурмы, еда на дом, Food Boom">
+  <link rel="canonical" href="https://ваш-домен.ru/">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --clay-brown: #A0522D; --stone-grey: #8B8680; --cream: #FAF0E6;
+      --charcoal: #36454F; --matcha-green: #6B7B3A; --indigo: #3F51B5; --kintsugi-gold: #D4AF37;
+      --font-display: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+      --font-mono: 'Inter', system-ui, sans-serif;
+      --shadow-soft: 2px 4px 12px rgba(54, 69, 79, 0.08);
+      --shadow-hover: 4px 8px 24px rgba(54, 69, 79, 0.12);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    section[id] { scroll-margin-top: 90px; }
+    body {
+      font-family: var(--font-display); background-color: var(--cream); color: var(--charcoal);
+      line-height: 1.6; overflow-x: hidden;
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-blend-mode: multiply;
+    }
+    h1, h2, h3 { font-weight: 700; line-height: 1.15; color: var(--charcoal); letter-spacing: -0.02em; }
+    a { text-decoration: none; color: inherit; }
+    .kintsugi-line { position: relative; display: inline-block; }
+    .kintsugi-line::after { content: ''; position: absolute; bottom: -10px; left: 0; width: 60%; height: 2px; background: var(--kintsugi-gold); border-radius: 2px; transform: rotate(-1deg); }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+
+    .nav { position: fixed; top: 0; width: 100%; background: rgba(250,240,230,0.95); backdrop-filter: blur(8px); z-index: 100; border-bottom: 1px solid rgba(139,134,128,0.2); padding: 1rem 0; transition: var(--transition); }
+    .nav.scrolled { padding: 0.6rem 0; box-shadow: 0 4px 20px rgba(0,0,0,0.08); background: rgba(250,240,230,0.98); }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .logo { font-size: 1.3rem; font-weight: 800; letter-spacing: 0.02em; text-transform: uppercase; }
+    .nav-links { display: flex; gap: 1.5rem; font-size: 0.95rem; font-weight: 500; align-items: center; flex-wrap: wrap; }
+    .nav-links a { position: relative; transition: var(--transition); }
+    .nav-links a:hover, .nav-links a.active { color: var(--clay-brown); }
+    .nav-links a.active::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: var(--kintsugi-gold); }
+    .btn { display: inline-block; background-color: var(--clay-brown); color: var(--cream); padding: 0.65rem 1.3rem; border: none; font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: var(--transition); border-radius: 0 12px 0 12px; }
+    .btn:hover { background-color: #8b4513; box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+    .btn-ghost { background: transparent; color: var(--clay-brown); border: 1px solid var(--clay-brown); }
+    .btn-ghost:hover { background: rgba(160,82,45,0.1); }
+    .cart-btn { background: transparent; border: 1px solid var(--charcoal); color: var(--charcoal); padding: 0.5rem 1rem; border-radius: 0 8px 0 8px; font-family: var(--font-mono); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: var(--transition); }
+    .cart-btn:hover { background: var(--charcoal); color: var(--cream); }
+    .cart-count { background: var(--kintsugi-gold); color: var(--charcoal); border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
+    .nav-user { font-family: var(--font-mono); font-size: 0.85rem; color: var(--clay-brown); }
+
+    .hero { position: relative; height: 85dvh; width: 100%; overflow: hidden; margin-top: 70px; }
+    .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s ease-in-out; display: flex; align-items: center; justify-content: center; }
+    .slide.active { opacity: 1; z-index: 1; }
+    .slide-bg { position: absolute; inset: 0; background-size: cover; background-position: center; filter: brightness(0.7) sepia(0.2); z-index: -1; }
+    .slide-content { text-align: center; color: var(--cream); max-width: 800px; padding: 2rem; z-index: 2; }
+    .slide-content h1 { font-size: clamp(2.6rem, 5.2vw, 4.4rem); font-weight: 800; letter-spacing: -0.035em; color: var(--cream); margin-bottom: 1rem; text-shadow: 2px 2px 8px rgba(0,0,0,0.3); }
+    .slide-content p { font-size: 1.3rem; margin-bottom: 2rem; opacity: 0.92; }
+    .slider-controls { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; gap: 1rem; z-index: 10; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(250,240,230,0.4); cursor: pointer; transition: var(--transition); }
+    .dot.active { background: var(--kintsugi-gold); transform: scale(1.2); }
+
+    .menu-section { padding: 7rem 0; text-align: center; }
+    .section-title { font-size: 2.25rem; font-weight: 700; margin-bottom: 3rem; text-align: center; }
+    
+    /* Стили для добавленного SEO-текста */
+    .seo-keywords-text { text-align: center; color: var(--stone-grey); margin-top: -2rem; margin-bottom: 3rem; font-size: 1.05rem; }
+
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
+    .product-card { background: var(--cream); border: 1px solid var(--stone-grey); border-radius: 0 20px 0 20px; overflow: hidden; cursor: pointer; transition: var(--transition); box-shadow: var(--shadow-soft); display: flex; flex-direction: column; }
+    .product-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
+    .product-card__img-wrapper { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; }
+    .product-card__img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .product-card:hover .product-card__img { transform: scale(1.05); }
+    .product-card__title { padding: 1.25rem 1.5rem; text-align: center; font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em; }
+
+    .testimonials { padding: 7rem 0; background: rgba(139,134,128,0.04); }
+    .section-eyebrow { text-align: center; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--clay-brown); margin-bottom: 0.85rem; }
+    .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 1.5rem; }
+    .testimonial-card { padding: 2rem; border-left: 3px solid var(--kintsugi-gold); background: var(--cream); box-shadow: var(--shadow-soft); border-radius: 0 20px 0 20px; display: flex; flex-direction: column; }
+    .testimonial-card p { font-size: 1.02rem; line-height: 1.7; margin-bottom: 1.5rem; flex: 1; }
+    .testimonial-author { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--clay-brown); }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(54,69,79,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: var(--transition); z-index: 1000; padding: 1.5rem; }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-content { background: var(--cream); border: 1px solid var(--stone-grey); border-radius: 0 24px 0 24px; padding: 3rem 2rem; position: relative; width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; transform: translateY(20px); transition: var(--transition); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    .modal-overlay.active .modal-content { transform: translateY(0); }
+    .close-btn { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--stone-grey); transition: var(--transition); }
+    .close-btn:hover { color: var(--clay-brown); transform: rotate(90deg); }
+
+    .product-modal__body { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+    .product-modal__img img { width: 100%; border-radius: 0 12px 0 12px; object-fit: cover; border: 1px solid var(--stone-grey); }
+    .product-modal__info h2 { font-size: 1.9rem; margin-bottom: 1rem; }
+    .product-modal__info .desc { color: var(--stone-grey); margin-bottom: 2rem; font-size: 1.1rem; }
+    .product-modal__footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(139,134,128,0.3); padding-top: 1.5rem; }
+    .product-modal__footer .price { font-family: var(--font-mono); font-size: 1.8rem; font-weight: 700; color: var(--clay-brown); }
+
+    .cart-modal { max-width: 560px; }
+    .cart-modal h2 { font-size: 1.6rem; margin-bottom: 1.5rem; text-align: center; }
+    .cart-items { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; max-height: 40vh; overflow-y: auto; }
+    .cart-item { display: flex; align-items: center; gap: 0.9rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(139,134,128,0.2); }
+    .cart-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 0 8px 0 8px; border: 1px solid var(--stone-grey); }
+    .cart-item__info { flex: 1; }
+    .cart-item__title { font-weight: 700; font-size: 1.1rem; }
+    .cart-item__price { font-family: var(--font-mono); font-size: 0.85rem; color: var(--stone-grey); }
+    .remove-item { background: none; border: none; color: var(--stone-grey); font-size: 1.5rem; cursor: pointer; transition: var(--transition); }
+    .remove-item:hover { color: var(--clay-brown); }
+    .qty { display: flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.9rem; }
+    .qty-btn { width: 26px; height: 26px; border: 1px solid var(--stone-grey); background: transparent; color: var(--charcoal); cursor: pointer; border-radius: 0 6px 0 6px; line-height: 1; transition: var(--transition); }
+    .qty-btn:hover { background: var(--clay-brown); color: var(--cream); border-color: var(--clay-brown); }
+    .cart-total { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem; padding-top: 1rem; border-top: 2px solid var(--kintsugi-gold); }
+    .checkout-btn { width: 100%; }
+    .cart-empty { text-align: center; color: var(--stone-grey); padding: 1rem 0; }
+
+    .success-modal { text-align: center; max-width: 440px; }
+    .success-icon { width: 60px; height: 60px; background: var(--matcha-green); color: var(--cream); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
+    .success-icon svg { width: 30px; height: 30px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .success-modal h2 { margin-bottom: 1rem; }
+    .success-modal p { color: var(--stone-grey); margin-bottom: 2rem; }
+
+    .feedback { padding: 7rem 0; background: linear-gradient(180deg, #36454F 0%, #2C3941 100%); color: var(--cream); }
+    .feedback .container { max-width: 860px; }
+    .feedback h2 { color: #fff; }
+    .feedback .section-title { font-weight: 800; }
+    .feedback .section-title::after { content: ''; display: block; width: 64px; height: 3px; margin: 1.1rem auto 0; background: var(--kintsugi-gold); border-radius: 2px; }
+    .form-container { max-width: 620px; margin: 0 auto; background: rgba(250,240,230,0.06); padding: 2.5rem; border: 1px solid rgba(250,240,230,0.14); border-radius: 0 24px 0 24px; }
+    .form-group { margin-bottom: 1.35rem; }
+    .form-group label { display: block; font-family: var(--font-display); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.55rem; color: var(--stone-grey); }
+    .feedback .form-group label { color: rgba(250,240,230,0.8); }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.95rem 1rem; background: rgba(250,240,230,0.05); border: 1px solid rgba(250,240,230,0.28); color: #fff; font-family: var(--font-display); font-size: 1rem; border-radius: 10px; transition: var(--transition); }
+    .feedback .form-group input::placeholder, .feedback .form-group textarea::placeholder { color: rgba(250,240,230,0.48); }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--kintsugi-gold); box-shadow: 0 0 0 3px rgba(212,175,55,0.22); background: rgba(250,240,230,0.08); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-consent { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0; margin: 0.25rem 0 1.4rem; }
+    .consent-label { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.86rem; line-height: 1.45; color: rgba(250,240,230,0.8); cursor: pointer; }
+    .consent-label input { width: 18px; height: 18px; flex: 0 0 18px; margin-top: 2px; accent-color: var(--kintsugi-gold); cursor: pointer; }
+    .consent-link { background: none; border: none; margin: 0.3rem 0 0 2.4rem; padding: 0; font-family: var(--font-display); font-size: 0.8rem; color: var(--kintsugi-gold); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+    .consent-link:hover { color: #fff; }
+    .form-submit { width: 100%; background: var(--clay-brown); color: #fff; border: none; padding: 1rem; font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; letter-spacing: 0.01em; cursor: pointer; transition: var(--transition); border-radius: 10px; }
+    .form-submit:hover { background: #8b4513; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
+    .form-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+    .form-status { margin-top: 1rem; font-family: var(--font-display); font-size: 0.9rem; text-align: center; display: none; }
+    .form-status.success { display: block; color: #A8C66C; }
+    .form-status.error { display: block; color: #FF9A8A; }
+
+    .footer { padding: 4rem 0 2rem; background: var(--cream); border-top: 1px solid var(--stone-grey); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 4rem; margin-bottom: 4rem; }
+    .footer h4 { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem; color: var(--stone-grey); }
+    .footer ul { list-style: none; }
+    .footer li { margin-bottom: 0.5rem; font-size: 0.95rem; }
+    .footer a:hover { color: var(--clay-brown); }
+    .footer-bottom { text-align: center; font-size: 0.78rem; color: var(--stone-grey); border-top: 1px solid rgba(139,134,128,0.2); padding-top: 2rem; }
+
+    #authModal .form-group input,
+    #checkoutModal .form-group input,
+    #checkoutModal .form-group select,
+    #checkoutModal .form-group textarea { background: rgba(250,240,230,0.6); border: 1px solid var(--stone-grey); color: var(--charcoal); font-family: var(--font-display); font-size: 1rem; padding: 0.8rem 1rem; border-radius: 0; transition: var(--transition); }
+    #authModal .form-group input:focus,
+    #checkoutModal .form-group input:focus,
+    #checkoutModal .form-group select:focus,
+    #checkoutModal .form-group textarea:focus { outline: none; border-color: var(--indigo); box-shadow: 0 0 0 2px var(--indigo); }
+    #authModal a { color: var(--clay-brown); font-weight: 600; }
+    #authModal a:hover { text-decoration: underline; }
+
+    .form-error { color: #d32f2f; font-size: 0.82rem; min-height: 1rem; margin-bottom: 0.5rem; }
+    .checkout-summary { display: flex; justify-content: space-between; align-items: center; font-size: 1.05rem; padding: 1rem 0; border-top: 1px solid rgba(139,134,128,0.3); margin: 1rem 0; }
+    .checkout-summary strong { color: var(--clay-brown); font-size: 1.4rem; }
+
+    .consent-modal { max-width: 780px; padding: 3rem 2.5rem; }
+    .consent-modal h2 { font-size: 1.55rem; margin-bottom: 0.5rem; padding-right: 2rem; }
+    .consent-meta { font-size: 0.78rem; letter-spacing: 0.03em; color: var(--clay-brown); margin-bottom: 1.75rem; }
+    .consent-doc { font-size: 0.94rem; line-height: 1.65; color: #4a4a4a; }
+    .consent-doc h3 { font-size: 1rem; margin: 1.6rem 0 0.5rem; color: var(--charcoal); }
+    .consent-doc p { margin-bottom: 0.7rem; }
+    .consent-doc ul, .consent-doc ol { margin: 0.25rem 0 0.8rem 1.3rem; }
+    .consent-doc li { margin-bottom: 0.3rem; }
+    .consent-doc a { color: var(--clay-brown); text-decoration: underline; }
+
+    @media (max-width: 992px) {
+      .product-modal__body { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+    }
+    @media (max-width: 768px) {
+      .nav-links a:not(.btn):not(.cart-btn) { display: none; }
+      .hero { height: 70dvh; }
+      .slide-content h1 { font-size: 2.5rem; }
+      .section-title { font-size: 1.9rem; }
+      .form-container { padding: 2rem 1.25rem; }
+      .product-grid { grid-template-columns: 1fr; }
+      .nav-user { display: none; }
+      .consent-modal { padding: 2.5rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="mainNav">
+    <div class="container nav-inner">
+      <div class="logo">Food Boom.</div>
+      <div class="nav-links">
+        <a href="#menu" class="nav-link">Меню</a>
+        <a href="#reviews" class="nav-link">Отзывы</a>
+        <a href="blog.html" class="nav-link">Блог</a>
+        <a href="#contact" class="nav-link">Контакты</a>
+        <button class="cart-btn" id="openCartBtn">Корзина <span class="cart-count" id="cartCount">0</span></button>
+        <div id="authNav">
+          <button class="btn" id="openAuthBtn" style="padding:0.5rem 1rem;font-size:0.95rem;">Вход</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero" id="heroSlider">
+    <div class="slide active">
+      <div class="slide-bg" style="background-image: url('images/image_0.webp');"></div>
+      <div class="slide-content">
+        <h1>Искусство Суши</h1>
+        <p>Создано вручную с несовершенной красотой и органическими ингредиентами.</p>
+        <a href="#menu" class="btn">Смотреть меню</a>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-bg" style="background-image: url('images/image_1.webp');"></div>
+      <div class="slide-content">
+        <h1>Удон с курицей</h1>
+        <p>Согревающие бульоны в аутентичной керамике.</p>
+        <a href="#menu" class="btn">Посмотреть меню</a>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-bg" style="background-image: url('images/image_2.webp');"></div>
+      <div class="slide-content">
+        <h1>Шаурма брааат</h1>
+        <p>Фииирминный соус ммммм.</p>
+        <a href="#menu" class="btn">Заказать боул</a>
+      </div>
+    </div>
+    <div class="slider-controls">
+      <span class="dot active" onclick="goToSlide(0)"></span>
+      <span class="dot" onclick="goToSlide(1)"></span>
+      <span class="dot" onclick="goToSlide(2)"></span>
+    </div>
+  </section>
+
+  <section class="menu-section container" id="menu">
+    <h2 class="section-title kintsugi-line">Меню</h2>
+    
+    <!-- ДОБАВЛЕН ВИДИМЫЙ SEO-ТЕКСТ -->
+    <p class="seo-keywords-text">
+      Закажите лучшие роллы и суши с доставкой на дом, а также попробуйте нашу фирменную шаурму и согревающий удон.
+    </p>
+
+    <div class="product-grid" id="productGrid"></div>
+  </section>
+
+  <section class="testimonials" id="reviews">
+    <div class="container">
+      <p class="section-eyebrow">Отзывы</p>
+      <h2 class="section-title">Слова у стола</h2>
+      <div class="testimonial-grid">
+        <div class="testimonial-card">
+          <p>«Асимметрия ролла Филадельфия соответствовала асимметрии моей жизни. Просто глубоко.»</p>
+          <div class="testimonial-author">— Кенджи М.</div>
+        </div>
+        <div class="testimonial-card">
+          <p>«Я заказал боул с удоном. Он приехал слегка остывшим, но керамическая миска была прекрасна. Истинный Ваби-Саби.»</p>
+          <div class="testimonial-author">— Сара Л.</div>
+        </div>
+        <div class="testimonial-card">
+          <p>«Пицца была подгоревшей с одной стороны. Они не извинились. Они сказали, что это «намеренная бренность». 10/10.»</p>
+          <div class="testimonial-author">— Алекс Р.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feedback" id="contact">
+    <div class="container">
+      <h2 class="section-title">Отправить Сообщение</h2>
+      <div class="form-container">
+        <form id="feedbackForm">
+          <div class="form-group">
+            <label for="fbName">Ваше Имя</label>
+            <input type="text" id="fbName" required placeholder="Введите ваше имя">
+          </div>
+          <div class="form-group">
+            <label for="fbEmail">Email</label>
+            <input type="email" id="fbEmail" required placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label for="fbMessage">Сообщение</label>
+            <textarea id="fbMessage" required placeholder="Расскажите о вашем заказе..."></textarea>
+          </div>
+          <div class="form-consent">
+            <label class="consent-label" for="fbConsent">
+              <input type="checkbox" id="fbConsent" name="consent" required>
+              <span>Я согласен(-на) на обработку персональных данных в соответствии с Федеральным законом № 152-ФЗ</span>
+            </label>
+            <button type="button" class="consent-link js-open-consent">Читать соглашение</button>
+          </div>
+          <button type="submit" class="form-submit">Отправить</button>
+          <div class="form-status" id="formStatus" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      
+      <!-- ДОБАВЛЕНЫ СКРЫТЫЕ КЛЮЧЕВЫЕ ФРАЗЫ -->
+      <div style="display: none;" aria-hidden="true">
+        Доставка суши на дом, заказать роллы с доставкой, вкусная шаурма и удон, доставка еды Food Boom.
+      </div>
+
+      <div class="footer-grid">
+        <div>
+          <div class="logo" style="margin-bottom:1rem;">Food Boom.</div>
+          <p style="color: var(--stone-grey); max-width: 300px;">Находим красоту в несовершенном. Кулинарное искусство с ноткой золота.</p>
+        </div>
+        <div>
+          <h4>Навигация</h4>
+          <ul>
+            <li><a href="#menu">Меню</a></li>
+            <li><a href="#reviews">Отзывы</a></li>
+            <li><a href="blog.html">Блог</a></li>
+            <li><a href="#contact">Контакты</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Документы</h4>
+          <ul>
+            <li><a href="#" class="js-open-consent">Политика конфиденциальности</a></li>
+            <li><a href="#" class="js-open-consent">Согласие 152-ФЗ</a></li>
+            <li><a href="#">Условия использования</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Food Boom. Все права защищены.
+        <a href="#" class="js-open-consent" style="text-decoration: underline;">Согласие на обработку персональных данных (152-ФЗ)</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Product Modal -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-content product-modal">
+      <button class="close-btn" id="closeProductModal">&times;</button>
+      <div class="product-modal__body">
+        <div class="product-modal__img"><img src="" alt="" id="modalImg"></div>
+        <div class="product-modal__info">
+          <h2 id="modalTitle"></h2>
+          <p class="desc" id="modalDesc"></p>
+          <div class="product-modal__footer">
+            <div class="price" id="modalPrice"></div>
+            <button class="btn" id="addToCartBtn">В корзину</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart -->
+  <div class="modal-overlay" id="cartModal">
+    <div class="modal-content cart-modal">
+      <button class="close-btn" id="closeCartModal">&times;</button>
+      <h2>Ваш Заказ</h2>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-total"><span>Итого:</span><span id="cartTotalPrice">0 ₽</span></div>
+      <button class="btn checkout-btn" id="checkoutBtn">Оформить заказ</button>
+    </div>
+  </div>
+
+  <!-- Checkout -->
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal-content" style="max-width: 560px;">
+      <button class="close-btn" id="closeCheckoutModal">&times;</button>
+      <h2 style="font-size:2rem;margin-bottom:1.5rem;text-align:center;">Оформление заказа</h2>
+      <form id="checkoutForm">
+        <div class="form-group"><label for="coName">Имя *</label>
+          <input type="text" id="coName" required placeholder="Иван Иванов"></div>
+        <div class="form-group"><label for="coPhone">Телефон *</label>
+          <input type="tel" id="coPhone" required placeholder="+7 999 123-45-67"></div>
+        <div class="form-group"><label for="coEmail">Email</label>
+          <input type="email" id="coEmail" placeholder="you@example.com"></div>
+        <div class="form-group"><label for="coDelivery">Способ получения</label>
+          <select id="coDelivery">
+            <option value="delivery">Доставка</option>
+            <option value="pickup">Самовывоз</option>
+          </select></div>
+        <div class="form-group" id="addressGroup"><label for="coAddress">Адрес доставки *</label>
+          <input type="text" id="coAddress" placeholder="Улица, дом, квартира"></div>
+        <div class="form-group"><label for="coPayment">Способ оплаты</label>
+          <select id="coPayment">
+            <option value="card">Картой курьеру</option>
+            <option value="cash">Наличными</option>
+            <option value="online">Онлайн-оплата</option>
+          </select></div>
+        <div class="form-group"><label for="coComment">Комментарий</label>
+          <textarea id="coComment" rows="2" style="min-height:70px;"></textarea></div>
+        <div class="checkout-summary"><span>К оплате:</span><strong id="coTotal">0 ₽</strong></div>
+        <div class="form-error" id="coError"></div>
+        <button type="submit" class="form-submit" id="coSubmit">Подтвердить заказ</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Success -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-content success-modal">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <h2>Заказ Принят</h2>
+      <p id="successText">Ваша еда готовится с осознанным намерением.</p>
+      <button class="btn" id="closeSuccessBtn">Вернуться в меню</button>
+    </div>
+  </div>
+
+  <!-- Consent 152-ФЗ -->
+  <div class="modal-overlay" id="consentModal">
+    <div class="modal-content consent-modal">
+      <button class="close-btn" id="closeConsentModal">&times;</button>
+      <h2>Согласие на обработку персональных данных</h2>
+      <p class="consent-meta">Федеральный закон от 27.07.2006 № 152-ФЗ «О персональных данных» · редакция от 3 ноября 2026 г.</p>
+      <div class="consent-doc">
+        <p>Настоящее Согласие определяет порядок обработки персональных данных пользователей сайта Food Boom (далее — Сайт) и условия предоставления согласия на такую обработку.</p>
+
+        <h3>1. Оператор</h3>
+        <p>Оператор персональных данных — Food Boom (далее — Оператор). Обращения по вопросам обработки персональных данных: <a href="mailto:privacy@foodboom.ru">privacy@foodboom.ru</a>.</p>
+
+        <h3>2. Перечень персональных данных</h3>
+        <ul>
+          <li>имя;</li>
+          <li>адрес электронной почты;</li>
+          <li>номер телефона;</li>
+          <li>адрес доставки (при оформлении заказа);</li>
+          <li>текст сообщения, направленного через форму обратной связи;</li>
+          <li>сведения о заказах и истории взаимодействия с Сайтом.</li>
+        </ul>
+
+        <h3>3. Цели обработки</h3>
+        <ul>
+          <li>рассмотрение обращений и обратная связь;</li>
+          <li>оформление, оплата, доставка и сопровождение заказов;</li>
+          <li>информирование о статусе заказа;</li>
+          <li>улучшение качества сервиса и Сайта.</li>
+        </ul>
+
+        <h3>4. Правовые основания</h3>
+        <p>Обработка осуществляется на основании статьи 6 Федерального закона № 152-ФЗ, согласия субъекта персональных данных, выраженного путём проставления отметки в форме на Сайте, а также в целях исполнения договора, стороной которого является субъект персональных данных.</p>
+
+        <h3>5. Действия с персональными данными</h3>
+        <p>Сбор, запись, систематизация, накопление, хранение, уточнение (обновление, изменение), извлечение, использование, передача (предоставление, доступ) в объёме, необходимом для достижения целей обработки, блокирование, обезличивание, удаление и уничтожение.</p>
+
+        <h3>6. Срок обработки и хранения</h3>
+        <p>До достижения целей обработки либо до отзыва согласия. Персональные данные, необходимые для исполнения требований законодательства, хранятся в течение сроков, установленных законом.</p>
+
+        <h3>7. Передача третьим лицам</h3>
+        <p>Оператор вправе передавать персональные данные службам доставки и платёжным сервисам исключительно в объёме, необходимом для исполнения заказа, а также государственным органам — в случаях, предусмотренных законодательством.</p>
+
+        <h3>8. Права субъекта персональных данных</h3>
+        <p>Получать информацию об обработке своих персональных данных, требовать их уточнения, блокирования или уничтожения в случае, если данные являются неполными, устаревшими, неточными или незаконно полученными, а также отозвать настоящее согласие.</p>
+
+        <h3>9. Отзыв согласия</h3>
+        <p>Согласие может быть отозвано путём направления письменного заявления на адрес <a href="mailto:privacy@foodboom.ru">privacy@foodboom.ru</a>. После отзыва согласия Оператор прекращает обработку и уничтожает персональные данные в срок, не превышающий 30 дней, если иное не предусмотрено законом.</p>
+
+        <h3>10. Заключительные положения</h3>
+        <p>Согласие действует с момента его предоставления и до отзыва. Актуальная редакция Согласия всегда доступна на Сайте.</p>
+      </div>
+      <button class="btn" id="closeConsentBtn" style="margin-top: 2rem;">Понятно</button>
+    </div>
+  </div>
+
+  <!-- Auth -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-content" style="max-width: 400px;">
+      <button class="close-btn" id="closeAuthModal">&times;</button>
+
+      <div id="loginFormWrapper">
+        <h2 style="margin-bottom:1.5rem;text-align:center;">Вход</h2>
+        <form id="loginForm">
+          <div class="form-group"><label>Email</label>
+            <input type="email" id="loginIdentifier" required></div>
+          <div class="form-group"><label>Пароль</label>
+            <input type="password" id="loginPassword" required></div>
+          <button type="submit" class="form-submit" style="margin-bottom:1rem;">Войти</button>
+          <p style="text-align:center;font-size:0.9rem;">Нет аккаунта? <a href="#" id="showRegister">Регистрация</a></p>
+        </form>
+      </div>
+
+      <div id="registerFormWrapper" style="display:none;">
+        <h2 style="margin-bottom:1.5rem;text-align:center;">Регистрация</h2>
+        <form id="registerForm">
+          <div class="form-group"><label>Имя</label><input type="text" id="regName" required></div>
+          <div class="form-group"><label>Email</label><input type="email" id="regEmail" required></div>
+          <div class="form-group"><label>Телефон</label><input type="tel" id="regPhone" placeholder="+7 999 123-45-67"></div>
+          <div class="form-group"><label>Пароль (мин. 4)</label>
+            <input type="password" id="regPassword" required minlength="4"></div>
+          <button type="submit" class="form-submit" style="margin-bottom:1rem;">Зарегистрироваться</button>
+          <p style="text-align:center;font-size:0.9rem;">Уже есть аккаунт? <a href="#" id="showLogin">Войти</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Если /api недоступен (статический хостинг), данные берутся из браузера -->
+  <script src="js/api-fallback.js"></script>
+
+  <script>
+  /* ========================= API для Node.js ========================= */
+  const TOKEN_KEY = 'fb_token';
+
+  const API = {
+    async call(path, opts = {}) {
+      const token = localStorage.getItem(TOKEN_KEY);
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      const res = await fetch('/api/' + path, {
+        headers: headers,
+        method: opts.method || 'GET',
+        body: opts.body
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || ('Ошибка ' + res.status));
+      return data;
+    },
+    me:         ()           => API.call('auth/me'),
+    login:      async (email, password) => {
+      const d = await API.call('auth/login', { method:'POST', body: JSON.stringify({ email, password }) });
+      if (d.token) localStorage.setItem(TOKEN_KEY, d.token);
+      return d;
+    },
+    register:   async (d)    => {
+      const res = await API.call('auth/register', { method:'POST', body: JSON.stringify(d) });
+      if (res.token) localStorage.setItem(TOKEN_KEY, res.token);
+      return res;
+    },
+    logout:     ()           => {
+      localStorage.removeItem(TOKEN_KEY);
+      return Promise.resolve();
+    },
+    products:   ()           => API.call('products'),
+    createOrder:(d)          => API.call('orders', { method:'POST', body: JSON.stringify(d) }),
+    createFeedback: (d)      => API.call('feedback', { method:'POST', body: JSON.stringify(d) })
+  };
+
+  /* ========================= State ========================= */
+  const CART_KEY = 'fb_cart';
+  let products = [];
+  let cart = [];
+  let currentProductId = null;
+
+  function saveCart() { localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+
+  const $ = id => document.getElementById(id);
+  const productGrid        = $('productGrid');
+  const productModal       = $('productModal');
+  const cartModal          = $('cartModal');
+  const checkoutModal      = $('checkoutModal');
+  const successModal       = $('successModal');
+  const authModal          = $('authModal');
+  const cartItemsContainer = $('cartItems');
+  const cartCount          = $('cartCount');
+  const cartTotalPrice     = $('cartTotalPrice');
+
+  /* ========================= Cart ========================= */
+  function loadCart() {
+    try { cart = (JSON.parse(localStorage.getItem(CART_KEY)) || []).map(Number); }
+    catch(e) { cart = []; }
+  }
+  function cartDetailed() {
+    const map = new Map();
+    cart.forEach(id => map.set(id, (map.get(id) || 0) + 1));
+    return Array.from(map.entries()).map(([id, qty]) => {
+      const p = products.find(x => x.id === id);
+      if (!p) return null;
+      return { id, name: p.name, price: p.price, img: p.img, qty, sum: p.price * qty };
+    }).filter(Boolean);
+  }
+  function cartTotal() { return cartDetailed().reduce((s, i) => s + i.sum, 0); }
+
+  function updateCart() {
+    cart = cart.filter(id => products.some(p => p.id === id));
+    saveCart();
+    cartCount.textContent = cart.length;
+    const items = cartDetailed();
+    if (!items.length) {
+      cartItemsContainer.innerHTML = '<p class="cart-empty">Корзина пуста.</p>';
+      cartTotalPrice.textContent = '0 ₽';
+      return;
+    }
+    cartItemsContainer.innerHTML = items.map(i =>
+      '<div class="cart-item">' +
+        '<img src="' + i.img + '" alt="' + i.name + '">' +
+        '<div class="cart-item__info">' +
+          '<div class="cart-item__title">' + i.name + '</div>' +
+          '<div class="cart-item__price">' + i.price + ' ₽ × ' + i.qty + ' = ' + i.sum + ' ₽</div>' +
+        '</div>' +
+        '<div class="qty">' +
+          '<button type="button" class="qty-btn" data-act="dec" data-id="' + i.id + '">−</button>' +
+          '<span>' + i.qty + '</span>' +
+          '<button type="button" class="qty-btn" data-act="inc" data-id="' + i.id + '">+</button>' +
+        '</div>' +
+        '<button type="button" class="remove-item" data-act="del" data-id="' + i.id + '">&times;</button>' +
+      '</div>'
+    ).join('');
+    cartTotalPrice.textContent = cartTotal() + ' ₽';
+  }
+
+  cartItemsContainer.addEventListener('click', e => {
+    const btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    const id = Number(btn.dataset.id);
+    if (btn.dataset.act === 'inc') cart.push(id);
+    if (btn.dataset.act === 'dec') { const i = cart.indexOf(id); if (i !== -1) cart.splice(i, 1); }
+    if (btn.dataset.act === 'del') cart = cart.filter(x => x !== id);
+    updateCart();
+  });
+
+  /* ========================= Modals ========================= */
+  function openModal(m) { m.classList.add('active'); document.body.style.overflow = 'hidden'; }
+  function closeModal(m) {
+    m.classList.remove('active');
+    if (!document.querySelector('.modal-overlay.active')) document.body.style.overflow = '';
+  }
+  ['closeProductModal','closeCartModal','closeCheckoutModal','closeSuccessBtn','closeAuthModal','closeConsentModal','closeConsentBtn']
+    .forEach(id => { const b = $(id); if (b) b.addEventListener('click', () => closeModal(b.closest('.modal-overlay'))); });
+  document.querySelectorAll('.js-open-consent').forEach(a => {
+    a.addEventListener('click', e => { e.preventDefault(); openModal($('consentModal')); });
+  });
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) closeModal(m); });
+  });
+
+  /* ========================= Products ========================= */
+  function renderProducts() {
+    productGrid.innerHTML = '';
+    if (!products.length) {
+      productGrid.innerHTML = '<p style="text-align:center;color:var(--stone-grey);">Товары не загрузились.</p>';
+      return;
+    }
+    products.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML =
+        '<div class="product-card__img-wrapper"><img src="' + p.img + '" alt="' + p.name + '" class="product-card__img" loading="lazy"></div>' +
+        '<h3 class="product-card__title">' + p.name + '</h3>';
+      card.addEventListener('click', () => {
+        currentProductId = p.id;
+        $('modalImg').src = p.img;
+        $('modalImg').alt = p.name;
+        $('modalTitle').textContent = p.name;
+        $('modalDesc').textContent = p.desc;
+        $('modalPrice').textContent = p.price + ' ₽';
+        openModal(productModal);
+      });
+      productGrid.appendChild(card);
+    });
+  }
+  $('addToCartBtn').addEventListener('click', () => {
+    if (!currentProductId) return;
+    cart.push(currentProductId);
+    updateCart();
+    closeModal(productModal);
+    openModal(cartModal);
+  });
+  $('openCartBtn').addEventListener('click', () => openModal(cartModal));
+
+  /* ========================= Checkout ========================= */
+  const coDelivery = $('coDelivery');
+  const coAddress = $('coAddress');
+  const addressGroup = $('addressGroup');
+  const coTotal = $('coTotal');
+  const checkoutForm = $('checkoutForm');
+  const coError = $('coError');
+  const coSubmit = $('coSubmit');
+
+  coDelivery.addEventListener('change', () => {
+    const isDelivery = coDelivery.value === 'delivery';
+    addressGroup.style.display = isDelivery ? '' : 'none';
+    coAddress.required = isDelivery;
+  });
+
+  $('checkoutBtn').addEventListener('click', async () => {
+    if (!cart.length) { alert('Ваша корзина пуста.'); return; }
+    try {
+      const { user } = await API.me();
+      if (user) {
+        $('coName').value = user.name || '';
+        $('coPhone').value = user.phone || '';
+        $('coEmail').value = user.email || '';
+      }
+    } catch(e) { /* ignore */ }
+    coError.textContent = '';
+    coTotal.textContent = cartTotal() + ' ₽';
+    closeModal(cartModal);
+    openModal(checkoutModal);
+  });
+
+  checkoutForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    coError.textContent = '';
+    const items = cartDetailed().map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty }));
+    if (!items.length) { coError.textContent = 'Корзина пуста.'; return; }
+
+    const customer = {
+      name:  $('coName').value.trim(),
+      phone: $('coPhone').value.trim(),
+      email: $('coEmail').value.trim()
+    };
+    const delivery = coDelivery.value;
+    const address  = coAddress.value.trim();
+    const payment  = $('coPayment').value;
+    const comment  = $('coComment').value.trim();
+
+    if (!customer.name) { coError.textContent = 'Укажите имя.'; return; }
+    if (customer.phone.replace(/\D/g, '').length < 6) { coError.textContent = 'Укажите корректный телефон.'; return; }
+    if (delivery === 'delivery' && address.length < 5) { coError.textContent = 'Укажите адрес доставки.'; return; }
+
+    coSubmit.disabled = true;
+    coSubmit.textContent = 'Отправка...';
+    try {
+      const order = await API.createOrder({ items, customer, delivery, address, payment, comment });
+      cart = []; updateCart();
+      checkoutForm.reset();
+      coDelivery.dispatchEvent(new Event('change'));
+      closeModal(checkoutModal);
+      $('successText').textContent =
+        'Заказ ' + order.number + ' принят на сумму ' + order.total + ' ₽. Мы позвоним по номеру ' + customer.phone + '.';
+      openModal(successModal);
+    } catch (err) {
+      coError.textContent = err.message || 'Не удалось создать заказ.';
+    } finally {
+      coSubmit.disabled = false;
+      coSubmit.textContent = 'Подтвердить заказ';
+    }
+  });
+
+  /* ========================= Feedback ========================= */
+  $('feedbackForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const status = $('formStatus');
+    const btn = e.target.querySelector('button[type="submit"]');
+    const name    = $('fbName').value.trim();
+    const email   = $('fbEmail').value.trim();
+    const message = $('fbMessage').value.trim();
+    if (!name || !email || !message) {
+      status.textContent = 'Заполните все поля.'; status.className = 'form-status error'; return;
+    }
+    if (!$('fbConsent').checked) {
+      status.textContent = 'Подтвердите согласие на обработку персональных данных.'; status.className = 'form-status error'; return;
+    }
+    btn.textContent = 'Отправка...'; btn.disabled = true;
+    try {
+      await API.createFeedback({ name, email, message, consent: true });
+      e.target.reset();
+      status.textContent = 'Сообщение получено. Спасибо!';
+      status.className = 'form-status success';
+    } catch (err) {
+      status.textContent = err.message || 'Ошибка отправки.';
+      status.className = 'form-status error';
+    } finally {
+      btn.textContent = 'Отправить'; btn.disabled = false;
+    }
+  });
+
+  /* ========================= Auth ========================= */
+  const authNav = $('authNav');
+  const loginWrapper = $('loginFormWrapper');
+  const registerWrapper = $('registerFormWrapper');
+
+  $('showRegister').addEventListener('click', e => {
+    e.preventDefault(); loginWrapper.style.display = 'none'; registerWrapper.style.display = 'block';
+  });
+  $('showLogin').addEventListener('click', e => {
+    e.preventDefault(); registerWrapper.style.display = 'none'; loginWrapper.style.display = 'block';
+  });
+
+  function renderAuthNav(user) {
+    if (!authNav) return;
+    if (user) {
+      const isStaff = user.role === 'admin' || user.role === 'operator';
+      authNav.innerHTML =
+        '<span class="nav-user">Привет, ' + user.name + '</span>' +
+        (isStaff ? '<a href="admin.html" class="btn" style="padding:0.5rem 1rem;font-size:0.95rem;">Панель</a>' : '') +
+        '<button class="btn btn-ghost" id="logoutBtn" style="padding:0.5rem 1rem;font-size:0.95rem;">Выйти</button>';
+      $('logoutBtn').addEventListener('click', async () => {
+        try { await API.logout(); } catch(e) {}
+        window.location.reload();
+      });
+    } else {
+      authNav.innerHTML = '<button class="btn" id="openAuthBtn" style="padding:0.5rem 1rem;font-size:0.95rem;">Вход</button>';
+      $('openAuthBtn').addEventListener('click', () => openModal(authModal));
+    }
+  }
+
+  $('loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    try {
+      await API.login($('loginIdentifier').value, $('loginPassword').value);
+      window.location.reload();
+    } catch (err) { alert(err.message || 'Ошибка входа'); }
+  });
+
+  $('registerForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    try {
+      await API.register({
+        name: $('regName').value.trim(),
+        email: $('regEmail').value.trim(),
+        phone: $('regPhone').value.trim(),
+        password: $('regPassword').value
+      });
+      window.location.reload();
+    } catch (err) { alert(err.message || 'Ошибка регистрации'); }
+  });
+
+  /* ========================= Slider ========================= */
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.dot');
+  let slideIndex = 0;
+  let slideTimer = setInterval(nextSlide, 6000);
+  function showSlide(i) {
+    slides.forEach(s => s.classList.remove('active'));
+    dots.forEach(d => d.classList.remove('active'));
+    slides[i].classList.add('active'); dots[i].classList.add('active');
+  }
+  function nextSlide() { slideIndex = (slideIndex + 1) % slides.length; showSlide(slideIndex); }
+  window.goToSlide = i => {
+    slideIndex = i; showSlide(i);
+    clearInterval(slideTimer); slideTimer = setInterval(nextSlide, 6000);
+  };
+
+  /* ========================= Sticky nav ========================= */
+  const nav = $('mainNav');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('section[id]');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 50);
+    let cur = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 150) cur = s.id; });
+    navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + cur));
+  });
+
+  /* ========================= Init ========================= */
+  (async function init() {
+    loadCart();
+    try {
+      products = await API.products();
+      renderProducts();
+    } catch (e) {
+      productGrid.innerHTML = '<p style="color:#d32f2f;text-align:center;">Не удалось загрузить каталог. Проверьте, что сервер Node.js запущен.</p>';
+    }
+    updateCart();
+    try {
+      const { user } = await API.me();
+      renderAuthNav(user);
+    } catch (e) { renderAuthNav(null); }
+  })();
+  </script>
+</body>
+</html>

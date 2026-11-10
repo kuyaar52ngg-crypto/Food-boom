@@ -1,0 +1,23 @@
+# Зависимости
+node_modules/
+
+# Секреты и локальная конфигурация
+.env
+.env.*
+!.env.example
+.osp/
+ююю.md
+
+# База данных и служебные файлы SQLite
+foodboom.db
+foodboom.db-shm
+foodboom.db-wal
+*.db
+*.db-shm
+*.db-wal
+
+# Служебные файлы
+*.log
+.shots/
+Thumbs.db
+.DS_Store
