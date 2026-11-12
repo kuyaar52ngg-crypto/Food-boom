@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Food Boom</title>
+  
+  <!-- ДОБАВЛЕНЫ SEO МЕТА-ТЕГИ -->
+  <meta name="description" content="Закажите вкусные роллы, суши, шаурму и удон с доставкой на дом. Свежие ингредиенты, быстрое приготовление и приятные цены в Food Boom.">
+  <meta name="keywords" content="доставка суши, заказать роллы, доставка шаурмы, еда на дом, Food Boom">
+  <link rel="canonical" href="https://ваш-домен.ru/">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -63,6 +69,10 @@
 
     .menu-section { padding: 7rem 0; text-align: center; }
     .section-title { font-size: 2.25rem; font-weight: 700; margin-bottom: 3rem; text-align: center; }
+    
+    /* Стили для добавленного SEO-текста */
+    .seo-keywords-text { text-align: center; color: var(--stone-grey); margin-top: -2rem; margin-bottom: 3rem; font-size: 1.05rem; }
+
     .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
     .product-card { background: var(--cream); border: 1px solid var(--stone-grey); border-radius: 0 20px 0 20px; overflow: hidden; cursor: pointer; transition: var(--transition); box-shadow: var(--shadow-soft); display: flex; flex-direction: column; }
     .product-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
@@ -241,6 +251,12 @@
 
   <section class="menu-section container" id="menu">
     <h2 class="section-title kintsugi-line">Меню</h2>
+    
+    <!-- ДОБАВЛЕН ВИДИМЫЙ SEO-ТЕКСТ -->
+    <p class="seo-keywords-text">
+      Закажите лучшие роллы и суши с доставкой на дом, а также попробуйте нашу фирменную шаурму и согревающий удон.
+    </p>
+
     <div class="product-grid" id="productGrid"></div>
   </section>
 
@@ -298,6 +314,12 @@
 
   <footer class="footer">
     <div class="container">
+      
+      <!-- ДОБАВЛЕНЫ СКРЫТЫЕ КЛЮЧЕВЫЕ ФРАЗЫ -->
+      <div style="display: none;" aria-hidden="true">
+        Доставка суши на дом, заказать роллы с доставкой, вкусная шаурма и удон, доставка еды Food Boom.
+      </div>
+
       <div class="footer-grid">
         <div>
           <div class="logo" style="margin-bottom:1rem;">Food Boom.</div>

@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin.html
+Disallow: /api/
+Disallow: /js/api-fallback.js
+Allow: /
+
+Sitemap: https://food-boom.freedev.app/
